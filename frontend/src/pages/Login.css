@@ -1,0 +1,154 @@
+/* *{
+  box-sizing:border-box;
+} */
+
+.auth-page,
+.register-page{
+  font-family:"Segoe UI",sans-serif;
+}
+
+.auth-page{
+  display:flex;
+  height:100vh;
+  width:100%;
+  overflow: hidden;
+}
+
+/* PANELS */
+
+.auth-left{
+  flex:0 0 50%;
+  background:#36253b;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:60px 40px;
+}
+
+.auth-right{
+  flex:0 0 50%;
+  background:#f4f4f4;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* LEFT CONTENT */
+
+.left-content{
+  max-width: 522px;
+}
+
+.brand{
+  font-size:40px;
+  font-weight:600;
+  margin-bottom:30px;
+}
+
+.left-content h1{
+  font-size:36px;
+  margin-bottom:16px;
+}
+
+.left-content p{
+  line-height:1.5;
+}
+
+/* IMAGE */
+
+.side-image{
+  width:400px;
+  margin-top:40px;
+}
+
+/* CARD */
+
+.auth-card{
+  width:380px;
+  background:#36253b;
+  color:white;
+  padding:40px;
+  border-radius:16px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.15);
+}
+
+.auth-card h2{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.auth-error{
+  margin:0 0 16px;
+  color:#ffb5b5;
+  font-size:14px;
+  text-align:center;
+}
+
+.auth-card form{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.auth-card input{
+  padding:12px;
+  border-radius:8px;
+  border:none;
+  background:#f4f4f4;
+}
+
+.auth-card button{
+  margin-top:10px;
+  padding:12px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.18);
+  border:1px solid rgba(255,255,255,0.3);
+  color:white;
+  cursor:pointer;
+}
+
+.auth-card button:disabled{
+  opacity:0.7;
+  cursor:not-allowed;
+}
+
+.switch-auth{
+  text-align:center;
+  margin-top:18px;
+}
+
+.switch-auth a{
+  color:white;
+  font-weight:600;
+  text-decoration:underline;
+}
+
+/* Home button default (login page) */
+
+.home-btn{
+  position:absolute;
+  top:25px;
+  left:30px;
+  color:white;
+  text-decoration:none;
+  font-weight:600;
+  font-size:15px;
+  padding:6px 12px;
+  border-radius:8px;
+  transition:0.2s;
+}
+
+.home-btn:hover{
+  background:rgba(255,255,255,0.15);
+}
+
+/* Register page home button */
+
+.register-page .home-btn{
+  color:black;
+}
+
+.register-page .home-btn:hover{
+  background:rgba(0,0,0,0.08);
+}

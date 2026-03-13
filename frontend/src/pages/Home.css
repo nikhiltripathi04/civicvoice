@@ -1,0 +1,109 @@
+
+
+.home-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:60vh;
+}
+
+.cards{
+    display:flex;
+    gap:80px;
+}
+
+/* TILT CARDS */
+.login-card{
+    background:#dcdcdc;
+    width:340px;
+    height:340px;
+    border-radius:10px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+
+.login-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 10px 20px rgba(0,0,0,0.15);
+}
+
+.login-card img{
+    width:170px;
+    margin-bottom:12px;
+}
+
+.login-card p{
+    font-weight:600;
+    font-size: 21px;
+}
+
+/* BANNER */
+
+.banner{
+    background:#4CAF50;
+    color:white;
+    text-align:center;
+    padding:22px;
+    font-size:22px;
+    font-weight:600;
+    margin-top:0px;
+}
+
+
+/* FOOTER */
+
+.footer{
+    background:#eeeeee;
+    padding:25px 120px;
+    display:flex;
+    justify-content:space-between;
+    margin-top:32px;
+}
+
+.footer-col{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.footer h3{
+    font-size:22px;
+}
+
+.footer h4{
+    font-size:18px;
+    margin-bottom:10px;
+}
+
+.footer p{
+    font-size:16px;
+    color:#444;
+}
+
+.footer a{
+    text-decoration:none;
+    color:#333;
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    transition:0.2s;
+}
+
+.footer a:hover{
+    color:#3b6df6;
+}
+
+.footer-icon{
+    font-size:16px;
+}
+
+.nav-links a:hover{
+    background:#e6e6e6;
+    border-radius:6px;
+}

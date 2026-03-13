@@ -2,9 +2,9 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from PIL import Image
 import io
 import time
+import os
+import tempfile
 
-from models.text_analyzer import analyze_complaint as analyze_text
-from models.image_classifier import classify_image
 from models.fusion_engine import fuse_results
 
 app = FastAPI(
@@ -35,36 +35,28 @@ async def analyze_complaint(
 ):
 
     start_time = time.time()
+    tmp_image_path = None
 
     try:
-        # -----------------
-        # TEXT ANALYSIS
-        # -----------------
-        text_result = analyze_text(text)
-
-        image_result = None
-
-        # -----------------
-        # IMAGE ANALYSIS
-        # -----------------
         if image:
-
             contents = await image.read()
 
             try:
-                img = Image.open(io.BytesIO(contents)).convert("RGB")
+                Image.open(io.BytesIO(contents)).verify()
             except Exception:
                 raise HTTPException(
                     status_code=400,
                     detail="Invalid image file uploaded"
                 )
 
-            image_result = classify_image(img)
+            _, ext = os.path.splitext(image.filename or "")
+            ext = ext if ext else ".jpg"
 
-        # -----------------
-        # FUSION ENGINE
-        # -----------------
-        result = fuse_results(text_result, image_result)
+            with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as tmp:
+                tmp.write(contents)
+                tmp_image_path = tmp.name
+
+        result = fuse_results(text, tmp_image_path)
 
         processing_time = round(time.time() - start_time, 3)
 
@@ -81,3 +73,9 @@ async def analyze_complaint(
             status_code=500,
             detail=f"AI processing failed: {str(e)}"
         )
+    finally:
+        if tmp_image_path:
+            try:
+                os.unlink(tmp_image_path)
+            except Exception:
+                pass

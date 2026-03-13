@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
 
+const BACKEND_ORIGIN = (import.meta.env.VITE_BACKEND_ORIGIN || "http://localhost:5001").replace(/\/$/, "");
+
 export default function AdminDashboard() {
 
   const [complaints, setComplaints] = useState([]);
@@ -61,7 +63,7 @@ export default function AdminDashboard() {
 
           {c.image && (
             <img
-              src={`http://localhost:3000/${c.image}`}
+              src={`${BACKEND_ORIGIN}/${c.image}`}
               width="200"
               alt="complaint"
             />

@@ -1,0 +1,151 @@
+.submit-page{
+  background:#ffffff;
+  padding:60px 20px;
+  display:flex;
+  justify-content:center;
+  min-height:calc(100vh - 80px);
+}
+
+.submit-card{
+  width:1000px;
+  background:#f5f5f5;
+  padding:40px;
+  border-radius:10px;
+  border:1px solid #dcdcdc;
+}
+
+.submit-title{
+  font-size:26px;
+  font-weight:700;
+  margin-bottom:25px;
+}
+
+.submit-alert{
+  margin:0 0 16px;
+  padding:12px;
+  border-radius:6px;
+  font-size:14px;
+}
+
+.submit-alert-error{
+  background:#ffe9e9;
+  color:#8f1d1d;
+  border:1px solid #f4b2b2;
+}
+
+.submit-alert-success{
+  background:#e8f9ee;
+  color:#126b35;
+  border:1px solid #a8dfba;
+}
+
+.submit-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:30px;
+}
+
+.submit-card label{
+  font-size:14px;
+  font-weight:600;
+  margin-top:10px;
+  display:block;
+}
+
+.submit-card input,
+.submit-card textarea{
+  width:100%;
+  box-sizing:border-box;
+  padding:10px;
+  margin-top:5px;
+  border-radius:6px;
+  border:1px solid #d0d0d0;
+}
+
+.upload-box{
+  border:2px dashed #ccc;
+  padding:30px;
+  text-align:center;
+  border-radius:6px;
+  margin-top:5px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.upload-box input{
+  display:none;
+}
+
+.example-images{
+  display:flex;
+  gap:10px;
+  margin-top:8px;
+}
+
+.example-images img{
+  width:70px;
+  height:60px;
+  object-fit:cover;
+  border-radius:4px;
+}
+
+.detect-btn{
+  margin-top:8px;
+  background:#2ecc71;
+  color:white;
+  border:none;
+  padding:6px 12px;
+  border-radius:4px;
+  cursor:pointer;
+}
+
+.map-box{
+  margin-top:10px;
+  border-radius:8px;
+  overflow:hidden;
+  border:1px solid #dcdcdc;
+}
+
+.submit-btn{
+  margin-top:30px;
+  width:100%;
+  background:#4CAF50;
+  color:white;
+  padding:15px;
+  font-size:20px;
+  font-weight:600;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.submit-note{
+  margin-top:24px;
+  margin-bottom:0;
+  font-size:18px;
+  font-weight:600;
+}
+
+.submit-btn:disabled,
+.detect-btn:disabled{
+  opacity:0.7;
+  cursor:not-allowed;
+}
+
+@media (max-width:900px){
+  .submit-card{
+    width:100%;
+    padding:24px;
+  }
+
+  .submit-grid{
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+
+  .submit-title{
+    font-size:22px;
+  }
+}

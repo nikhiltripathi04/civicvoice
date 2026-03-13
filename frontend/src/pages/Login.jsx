@@ -1,17 +1,28 @@
-import React from 'react'
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import API from "../services/api";
+import "./Login.css";
+import { useAuth } from "../context/AuthContext";
+
+import LeftHalf from "../assets/LoginPage/LeftHalf.png";
 
 const Login = () => {
-    const navigate = useNavigate();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+  const redirectTo = location.state?.from || "/submit";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = async (e) => {
 
     e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMessage("");
 
     try {
 
@@ -20,55 +31,99 @@ const Login = () => {
         password
       });
 
-      localStorage.setItem("token", res.data.token);
+      login({
+        token: res.data.token,
+        user: res.data.user
+      });
 
-      alert("Login successful");
-
-      navigate("/submit");
+      navigate(redirectTo, { replace: true });
 
     } catch (error) {
+      setErrorMessage(error.userMessage || "Invalid email or password");
 
-      alert("Invalid email or password");
+    } finally {
+      setIsSubmitting(false);
 
     }
 
   };
 
   return (
-    <div style={{ padding: "40px" }}>
 
-      <h2>Login</h2>
+    <div className="auth-page">
 
-      <form onSubmit={handleLogin}>
+         {/* HOME BUTTON */}
+      <Link to="/" className="home-btn">← Home</Link>
 
-        <input
-          type="email"
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+      {/* LEFT PANEL */}
 
-        <br /><br />
+<div className="auth-left">
 
-        <input
-          type="password"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+  <div className="left-content">
 
-        <br /><br />
+    <div className="brand">● CivicVoice</div>
 
-        <button type="submit">Login</button>
+    <h1>Manage civic complaints easily</h1>
 
-      </form>
+    <p>
+      Submit and track public issues to help improve your city.
+    </p>
 
-      <p>
-        Don't have an account? <Link to="/register">Register</Link>
-      </p>
+    <img src={LeftHalf} className="side-image" />
+
+  </div>
+
+</div>
+
+      {/* RIGHT PANEL */}
+
+      <div className="auth-right">
+
+        <div className="auth-card">
+
+          <h2>Sign In</h2>
+
+          {errorMessage && <p className="auth-error">{errorMessage}</p>}
+
+          <form onSubmit={handleLogin}>
+
+            <label>Email</label>
+
+            <input
+              type="email"
+              placeholder="Enter email"
+              onChange={(e)=>setEmail(e.target.value)}
+              required
+            />
+
+            <label>Password</label>
+
+            <input
+              type="password"
+              placeholder="Enter password"
+              onChange={(e)=>setPassword(e.target.value)}
+              required
+            />
+
+            <button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Signing In..." : "Sign In"}
+            </button>
+
+          </form>
+
+          <p className="switch-auth">
+            Don't have an account?
+            <Link to="/register"> Sign Up</Link>
+          </p>
+
+        </div>
+
+      </div>
 
     </div>
-  )
-}
 
-export default Login
+  );
+
+};
+
+export default Login;

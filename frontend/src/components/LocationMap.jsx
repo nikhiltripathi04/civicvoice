@@ -1,39 +1,42 @@
-import React from 'react'
+import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 
-function LocationMarker({setLocation}) {
- const [position,setPosition] = useState(null);
+function LocationMarker({ setLocation }) {
 
- useMapEvents({
-  click(e){
-   const {lat,lng} = e.latlng;
-   setPosition([lat,lng]);
-   setLocation({lat,lng});
-  }
- });
+  const [position, setPosition] = useState(null);
 
- return position === null ? null : <Marker position={position} />;
+  useMapEvents({
+    click(e) {
+
+      const { lat, lng } = e.latlng;
+
+      setPosition([lat, lng]);
+      setLocation({ lat, lng });
+
+    }
+  });
+
+  return position === null ? null : <Marker position={position} />;
 
 }
 
-const LocationMap = () => {
- 
+const LocationMap = ({ setLocation }) => {
 
   return (
     <MapContainer
-        center={[28.6139,77.2090]}
-        zoom={13}
-        style={{height:"400px"}}
+      center={[28.6139, 77.2090]}
+      zoom={13}
+      style={{ height: "250px", width: "100%" }}
     >
 
-        <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
 
-        <LocationMarker setLocation={setLocation}/>
+      <LocationMarker setLocation={setLocation} />
 
     </MapContainer>
-  )
-}
+  );
+};
 
-export default LocationMap
+export default LocationMap;

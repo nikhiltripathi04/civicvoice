@@ -1,0 +1,79 @@
+.complaint-card{
+  border:1px solid #dde4ec;
+  background:#ffffff;
+  border-radius:12px;
+  padding:18px;
+  box-shadow:0 8px 20px rgba(15, 48, 87, 0.06);
+}
+
+.complaint-card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+.complaint-card-header h3{
+  margin:0;
+  font-size:18px;
+  color:#183a62;
+}
+
+.status-chip{
+  text-transform:capitalize;
+  font-size:12px;
+  font-weight:700;
+  padding:6px 10px;
+  border-radius:999px;
+}
+
+.status-pending{
+  background:#fff3d6;
+  color:#8a6100;
+}
+
+.status-assigned{
+  background:#e3f2ff;
+  color:#005ea0;
+}
+
+.status-in-progress{
+  background:#e9ecff;
+  color:#3640a5;
+}
+
+.status-resolved{
+  background:#e7f9ee;
+  color:#187448;
+}
+
+.complaint-description{
+  margin:12px 0 16px;
+  color:#334a62;
+}
+
+.complaint-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(180px,1fr));
+  gap:12px;
+}
+
+.complaint-grid label{
+  display:block;
+  font-size:12px;
+  color:#68809d;
+  margin-bottom:4px;
+  text-transform:uppercase;
+  letter-spacing:0.4px;
+}
+
+.complaint-grid p{
+  margin:0;
+  color:#17314f;
+}
+
+@media (max-width:700px){
+  .complaint-grid{
+    grid-template-columns:1fr;
+  }
+}

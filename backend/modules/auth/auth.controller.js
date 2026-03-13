@@ -1,6 +1,18 @@
 const User = require("./auth.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { sendError } = require("../../utils/error");
+
+const isValidEmail = (email = "") => {
+ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+const sanitizeUser = (user) => ({
+ id: user._id,
+ name: user.name,
+ email: user.email,
+ role: user.role
+});
 
 exports.register = async (req,res)=>{
 
@@ -8,10 +20,38 @@ exports.register = async (req,res)=>{
 
   const {name,email,password} = req.body;
 
+    if (!name || !email || !password) {
+     return sendError(res, {
+        status: 400,
+        message: "Name, email, and password are required",
+        code: "AUTH_VALIDATION_ERROR"
+     });
+    }
+
+    if (!isValidEmail(email)) {
+     return sendError(res, {
+        status: 400,
+        message: "Please provide a valid email address",
+        code: "AUTH_INVALID_EMAIL"
+     });
+    }
+
+    if (String(password).length < 6) {
+     return sendError(res, {
+        status: 400,
+        message: "Password must be at least 6 characters long",
+        code: "AUTH_WEAK_PASSWORD"
+     });
+    }
+
   const existingUser = await User.findOne({email});
 
   if(existingUser){
-   return res.status(400).json({message:"User already exists"});
+     return sendError(res, {
+        status: 409,
+        message: "An account with this email already exists",
+        code: "AUTH_USER_EXISTS"
+     });
   }
 
   const hashedPassword = await bcrypt.hash(password,10);
@@ -24,11 +64,16 @@ exports.register = async (req,res)=>{
 
   res.json({
    message:"User registered successfully",
-   user
+    user: sanitizeUser(user)
   });
 
  }catch(err){
-  res.status(500).json(err);
+  return sendError(res, {
+    status: 500,
+    message: "Unable to register user right now",
+    code: "AUTH_REGISTER_FAILED",
+    error: err
+  });
  }
 
 };
@@ -39,16 +84,40 @@ exports.login = async (req,res)=>{
 
   const {email,password} = req.body;
 
+    if (!email || !password) {
+     return sendError(res, {
+        status: 400,
+        message: "Email and password are required",
+        code: "AUTH_VALIDATION_ERROR"
+     });
+    }
+
   const user = await User.findOne({email});
 
   if(!user){
-   return res.status(400).json({message:"Invalid credentials"});
+     return sendError(res, {
+        status: 401,
+        message: "Invalid email or password",
+        code: "AUTH_INVALID_CREDENTIALS"
+     });
   }
 
   const isMatch = await bcrypt.compare(password,user.password);
 
   if(!isMatch){
-   return res.status(400).json({message:"Invalid credentials"});
+    return sendError(res, {
+     status: 401,
+     message: "Invalid email or password",
+     code: "AUTH_INVALID_CREDENTIALS"
+    });
+  }
+
+  if (!process.env.JWT_SECRET) {
+    return sendError(res, {
+     status: 500,
+     message: "Server auth configuration is incomplete",
+     code: "AUTH_CONFIG_MISSING"
+    });
   }
 
   const token = jwt.sign(
@@ -59,11 +128,16 @@ exports.login = async (req,res)=>{
 
   res.json({
    token,
-   user
+    user: sanitizeUser(user)
   });
 
  }catch(err){
-  res.status(500).json(err);
+  return sendError(res, {
+    status: 500,
+    message: "Unable to sign in right now",
+    code: "AUTH_LOGIN_FAILED",
+    error: err
+  });
  }
 
 };
