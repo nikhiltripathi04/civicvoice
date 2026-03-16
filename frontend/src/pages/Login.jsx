@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useNavigate, Link, useLocation, useSearchParams } from "react-router-dom";
 import API from "../services/api";
 import "./Login.css";
 import { useAuth } from "../context/AuthContext";
@@ -10,8 +10,11 @@ const Login = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const { login } = useAuth();
-  const redirectTo = location.state?.from || "/submit";
+  const roleFromQuery = (searchParams.get("role") || "user").toLowerCase();
+  const isAdminFlow = roleFromQuery === "admin";
+  const redirectTo = location.state?.from || (isAdminFlow ? "/admin" : "/submit");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -69,7 +72,7 @@ const Login = () => {
       Submit and track public issues to help improve your city.
     </p>
 
-    <img src={LeftHalf} className="side-image" />
+    <img src={LeftHalf} className="side-image" alt="Illustration of civic issue reporting" />
 
   </div>
 
@@ -81,7 +84,7 @@ const Login = () => {
 
         <div className="auth-card">
 
-          <h2>Sign In</h2>
+          <h2>{isAdminFlow ? "Admin Sign In" : "Sign In"}</h2>
 
           {errorMessage && <p className="auth-error">{errorMessage}</p>}
 
@@ -113,7 +116,7 @@ const Login = () => {
 
           <p className="switch-auth">
             Don't have an account?
-            <Link to="/register"> Sign Up</Link>
+            <Link to={isAdminFlow ? "/register?role=admin" : "/register?role=user"}> Sign Up</Link>
           </p>
 
         </div>

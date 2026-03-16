@@ -20,6 +20,21 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
+function AdminRoute({ children }) {
+  const { isAuthenticated, user } = useAuth();
+  const location = useLocation();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+  }
+
+  if (user?.role !== "admin" && user?.role !== "officer") {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+}
+
 function App() {
 
   return (
@@ -37,7 +52,7 @@ function App() {
 
       <Route path="/track" element={<TrackComplaint/>}/>
 
-    {/* <Route path="/admin" element={<AdminDashboard/>}/> */}
+      <Route path="/admin" element={<AdminRoute><AdminDashboard/></AdminRoute>}/>
 
    </Routes>
 

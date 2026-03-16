@@ -1,27 +1,47 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import API from "../services/api";
+import Navbar from "../components/Navbar";
+import "./AdminDashboard.css";
 
 const BACKEND_ORIGIN = (import.meta.env.VITE_BACKEND_ORIGIN || "http://localhost:5001").replace(/\/$/, "");
+
+const resolveComplaintImageUrl = (imagePath) => {
+  if (!imagePath || typeof imagePath !== "string") {
+    return "";
+  }
+
+  // Cloudinary and other absolute URLs should be used as-is.
+  if (/^https?:\/\//i.test(imagePath)) {
+    return imagePath;
+  }
+
+  const normalizedPath = imagePath.replace(/\\/g, "/").replace(/^\/+/, "");
+  return `${BACKEND_ORIGIN}/${normalizedPath}`;
+};
 
 export default function AdminDashboard() {
 
   const [complaints, setComplaints] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const fetchComplaints = useCallback(async () => {
+    setIsLoading(true);
+    setErrorMessage("");
+    try {
+      const res = await API.get("/complaints");
+      setComplaints(Array.isArray(res.data) ? res.data : []);
+    } catch (error) {
+      console.error("Error fetching complaints", error);
+      setErrorMessage(error.userMessage || "Unable to load submitted complaints.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchComplaints();
-  }, []);
-
-  const fetchComplaints = async () => {
-    try {
-
-      const res = await API.get("/complaints");
-
-      setComplaints(res.data);
-
-    } catch (error) {
-      console.error("Error fetching complaints", error);
-    }
-  };
+  }, [fetchComplaints]);
 
   const updateStatus = async (id, status) => {
 
@@ -39,54 +59,52 @@ export default function AdminDashboard() {
   };
 
   return (
+    <>
+      <Navbar />
 
-    <div style={{ padding: "20px" }}>
+      <main className="admin-page">
+        <section className="admin-shell">
+          <h2>Admin Dashboard</h2>
 
-      <h2>Admin Dashboard</h2>
+          {errorMessage && <p className="admin-empty">{errorMessage}</p>}
 
-      {complaints.map((c) => (
+          {!errorMessage && isLoading && <p className="admin-empty">Loading complaints...</p>}
 
-        <div
-          key={c._id}
-          style={{
-            border: "1px solid gray",
-            margin: "10px",
-            padding: "10px",
-          }}
-        >
-
-          <p><b>Description:</b> {c.description}</p>
-
-          <p><b>Status:</b> {c.status}</p>
-
-          <p><b>Department:</b> {c.department}</p>
-
-          {c.image && (
-            <img
-              src={`${BACKEND_ORIGIN}/${c.image}`}
-              width="200"
-              alt="complaint"
-            />
+          {!errorMessage && !isLoading && complaints.length === 0 && (
+            <p className="admin-empty">No complaints available right now.</p>
           )}
 
-          <br />
+          {!errorMessage && !isLoading && complaints.length > 0 && (
+            <div className="admin-list">
+              {complaints
+                .slice()
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .map((c) => (
+                <article key={c._id} className="admin-item">
+                  <p><strong>Description:</strong> {c.description}</p>
+                  <p><strong>Status:</strong> {c.status}</p>
+                  <p><strong>Submitted by:</strong> {c.user?.name || c.user?.email || "Unknown user"}</p>
+                  <p><strong>Department:</strong> {c.department || "Not assigned"}</p>
 
-          <button onClick={() => updateStatus(c._id, "in-progress")}>
-            Start
-          </button>
+                  {c.image && (
+                    <img
+                      className="admin-image"
+                      src={resolveComplaintImageUrl(c.image)}
+                      alt="Complaint evidence"
+                    />
+                  )}
 
-          <button
-            onClick={() => updateStatus(c._id, "resolved")}
-            style={{ marginLeft: "10px" }}
-          >
-            Resolve
-          </button>
-
-        </div>
-
-      ))}
-
-    </div>
+                  <div className="admin-actions">
+                    <button onClick={() => updateStatus(c._id, "in-progress")}>Start</button>
+                    <button onClick={() => updateStatus(c._id, "resolved")}>Resolve</button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
+    </>
 
   );
 }

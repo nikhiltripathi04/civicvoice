@@ -1,5 +1,7 @@
 import "./ComplaintCard.css";
 
+const BACKEND_ORIGIN = (import.meta.env.VITE_BACKEND_ORIGIN || "http://localhost:5001").replace(/\/$/, "");
+
 const statusClassMap = {
  pending: "status-pending",
  assigned: "status-assigned",
@@ -21,6 +23,19 @@ const formatDate = (value) => {
  return date.toLocaleString();
 };
 
+const resolveComplaintImageUrl = (imagePath) => {
+ if (!imagePath || typeof imagePath !== "string") {
+  return "";
+ }
+
+ if (/^https?:\/\//i.test(imagePath)) {
+  return imagePath;
+ }
+
+ const normalizedPath = imagePath.replace(/\\/g, "/").replace(/^\/+/, "");
+ return `${BACKEND_ORIGIN}/${normalizedPath}`;
+};
+
 export default function ComplaintCard({ complaint }) {
  if (!complaint) {
   return null;
@@ -37,6 +52,14 @@ export default function ComplaintCard({ complaint }) {
    </div>
 
    <p className="complaint-description">{complaint.description || "No description provided"}</p>
+
+    {complaint.image && (
+     <img
+      className="complaint-image"
+      src={resolveComplaintImageUrl(complaint.image)}
+      alt="Uploaded complaint evidence"
+     />
+    )}
 
    <div className="complaint-grid">
     <div>

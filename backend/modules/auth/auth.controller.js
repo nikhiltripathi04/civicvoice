@@ -7,6 +7,8 @@ const isValidEmail = (email = "") => {
  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
+const VALID_ROLES = ["user", "admin", "officer"];
+
 const sanitizeUser = (user) => ({
  id: user._id,
  name: user.name,
@@ -18,7 +20,7 @@ exports.register = async (req,res)=>{
 
  try{
 
-  const {name,email,password} = req.body;
+   const {name,email,password,role} = req.body;
 
     if (!name || !email || !password) {
      return sendError(res, {
@@ -44,6 +46,16 @@ exports.register = async (req,res)=>{
      });
     }
 
+      const resolvedRole = role ? String(role).toLowerCase() : "user";
+
+      if (!VALID_ROLES.includes(resolvedRole)) {
+         return sendError(res, {
+            status: 400,
+            message: "Role must be one of: user, admin, officer",
+            code: "AUTH_INVALID_ROLE"
+         });
+      }
+
   const existingUser = await User.findOne({email});
 
   if(existingUser){
@@ -59,7 +71,8 @@ exports.register = async (req,res)=>{
   const user = await User.create({
    name,
    email,
-   password:hashedPassword
+   password:hashedPassword,
+   role: resolvedRole
   });
 
   res.json({

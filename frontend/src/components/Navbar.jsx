@@ -1,9 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/", { replace: true });
+  };
 
   return (
     <>
@@ -15,12 +21,19 @@ export default function Navbar() {
       </div>
 
       <div className="nav-links">
-        <Link to="/">Home</Link>
-        <Link to="/track">Track Complaint</Link>
-        <Link to="/submit">Submit Complaint</Link>
+        {(user?.role !== "admin" || user?.role === "officer") && (
+          <Link to="/track">Track Complaint</Link>
+        )}
+        {(user?.role !== "admin" || user?.role === "officer") && (
+          <Link to="/submit">Submit Complaint</Link>
+        )}
+        
+        {(user?.role === "admin" || user?.role === "officer") && (
+          <Link to="/admin">Admin Dashboard</Link>
+        )}
         {isAuthenticated ? (
-          <button type="button" onClick={logout} className="nav-action-btn">
-            Logout{user?.name ? ` (${user.name})` : ""}
+          <button type="button" onClick={handleLogout} className="nav-action-btn">
+            Logout
           </button>
         ) : (
           <Link to="/login">Login</Link>

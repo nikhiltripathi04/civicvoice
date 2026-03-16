@@ -3,6 +3,10 @@ import API from "../services/api";
 import LocationMap from "../components/LocationMap";
 import Navbar from "../components/Navbar";
 import "./SubmitComplaint.css";
+import potholeImage from "../assets/pothole.jpg";
+import garbageImage from "../assets/garbage.jpg";
+import waterImage from "../assets/water.jpg";
+import roadImage from "../assets/road.jpg";
 
 export default function SubmitComplaint(){
 
@@ -11,7 +15,6 @@ export default function SubmitComplaint(){
  const [location,setLocation] = useState(null);
  const [name,setName] = useState("");
  const [phone,setPhone] = useState("");
- const [category,setCategory] = useState("");
  const [isSubmitting,setIsSubmitting] = useState(false);
  const [isDetectingLocation,setIsDetectingLocation] = useState(false);
  const [formError,setFormError] = useState("");
@@ -81,7 +84,6 @@ export default function SubmitComplaint(){
   }
   formData.append("name",name);
   formData.append("phone",phone);
-  formData.append("category",category);
 
   try{
 
@@ -94,7 +96,6 @@ export default function SubmitComplaint(){
    setLocation(null);
    setName("");
    setPhone("");
-   setCategory("");
 
   }catch(error){
 
@@ -118,6 +119,9 @@ export default function SubmitComplaint(){
     <h2 className="submit-title">
       Report a Civic Issue Today – Build a Better City Tomorrow
     </h2>
+    <p className="submit-intro">
+      Share accurate details and location so the right department can resolve your issue faster.
+    </p>
 
     {formError && <p className="submit-alert submit-alert-error">{formError}</p>}
     {formSuccess && <p className="submit-alert submit-alert-success">{formSuccess}</p>}
@@ -126,49 +130,7 @@ export default function SubmitComplaint(){
 
       {/* LEFT COLUMN */}
       <div className="left-form">
-
-        <label>Issue category</label>
-        <input
-          type="text"
-          value={category}
-          onChange={(e)=>setCategory(e.target.value)}
-          placeholder="e.g. Pothole, Garbage, Water leakage"
-        />
-
-        <label>Upload photo/videos</label>
-        <label className="upload-box">
-          <span>{image ? image.name : "Tap to Upload Image"}</span>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e)=>setImage(e.target.files?.[0] || null)}
-          />
-        </label>
-
-        <label>Example Images</label>
-        <div className="example-images">
-          <img src="/pothole.jpg" alt="Pothole example" />
-          <img src="/garbage.jpg" alt="Garbage issue example" />
-          <img src="/water.jpg" alt="Water issue example" />
-          <img src="/road.jpg" alt="Road issue example" />
-        </div>
-
-        <label>Your Location</label>
-        <button
-          type="button"
-          className="detect-btn"
-          onClick={handleDetectLocation}
-          disabled={isDetectingLocation}
-        >
-          {isDetectingLocation ? "Detecting..." : "Detect My Location"}
-        </button>
-
-        <div className="map-box">
-          <LocationMap setLocation={setLocation} />
-        </div>
-
-        <label>Latitude</label>
-        <input type="text" value={location?.lat || ""} readOnly/>
+        <div className="form-block-title">Contact Details</div>
 
         <label>Name</label>
         <input
@@ -186,27 +148,71 @@ export default function SubmitComplaint(){
           placeholder="Your phone number"
         />
 
+        <p className="form-help-text">
+          We use your contact details only to share complaint updates.
+        </p>
       </div>
 
       {/* RIGHT COLUMN */}
       <div className="right-form">
+        <div className="form-block-title">Issue Details</div>
 
         <label>Description</label>
         <textarea
-          rows="10"
+          rows="8"
           value={description}
           onChange={(e)=>setDescription(e.target.value)}
           placeholder="Describe the issue clearly: landmark, severity, and urgency"
         ></textarea>
 
-        <label>Longitude</label>
-        <input type="text" value={location?.lng || ""} readOnly/>
+        <label>Upload photo</label>
+        <label className="upload-box">
+          <span>{image ? image.name : "Tap to Upload Image"}</span>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e)=>setImage(e.target.files?.[0] || null)}
+          />
+        </label>
+
+        <label>Example Images</label>
+        <div className="example-images">
+          <img src={potholeImage} alt="Pothole example" />
+          <img src={garbageImage} alt="Garbage issue example" />
+          <img src={waterImage} alt="Water issue example" />
+          <img src={roadImage} alt="Road issue example" />
+        </div>
+
+        <label>Your Location</label>
+        <button
+          type="button"
+          className="detect-btn"
+          onClick={handleDetectLocation}
+          disabled={isDetectingLocation}
+        >
+          {isDetectingLocation ? "Detecting..." : "Detect My Location"}
+        </button>
+
+        <div className="map-box">
+          <LocationMap setLocation={setLocation} />
+        </div>
+
+        <div className="coords-grid">
+          <div>
+            <label>Latitude</label>
+            <input type="text" value={location?.lat || ""} readOnly/>
+          </div>
+          <div>
+            <label>Longitude</label>
+            <input type="text" value={location?.lng || ""} readOnly/>
+          </div>
+        </div>
 
       </div>
 
     </div>
 
-    <p className="submit-note">Be the change. Report issues now!</p>
+    {/* <p className="submit-note">Be the change. Report issues now!</p> */}
 
     <button className="submit-btn" type="submit" disabled={isSubmitting}>
       {isSubmitting ? "Submitting..." : "Submit"}

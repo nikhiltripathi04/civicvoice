@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import API from "../services/api";
 import "./Login.css";
 
@@ -8,6 +8,10 @@ import RightHalf from "../assets/LoginPage/RightHalf.png";
 const Register = () => {
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const roleFromQuery = (searchParams.get("role") || "user").toLowerCase();
+  const resolvedRole = roleFromQuery === "admin" ? "admin" : "user";
+  const isAdminFlow = resolvedRole === "admin";
 
   const [form, setForm] = useState({
     name: "",
@@ -28,11 +32,14 @@ const Register = () => {
 
     try {
 
-      await API.post("/auth/register", form);
+      await API.post("/auth/register", {
+        ...form,
+        role: resolvedRole
+      });
 
       alert("Registration successful");
 
-      navigate("/login");
+      navigate(isAdminFlow ? "/login?role=admin" : "/login?role=user");
 
     } catch (error) {
 
@@ -56,7 +63,7 @@ const Register = () => {
 
         <div className="auth-card">
 
-          <h2>Register</h2>
+          <h2>{isAdminFlow ? "Admin Register" : "Register"}</h2>
 
           <form onSubmit={handleSubmit}>
 
@@ -92,7 +99,7 @@ const Register = () => {
 
           <p className="switch-auth">
             Already have an account?
-            <Link to="/login"> Sign In</Link>
+            <Link to={isAdminFlow ? "/login?role=admin" : "/login?role=user"}> Sign In</Link>
           </p>
 
         </div>
@@ -113,7 +120,7 @@ const Register = () => {
             Create an account to submit and track civic complaints easily.
           </p>
 
-          <img src={RightHalf} className="side-image" />
+          <img src={RightHalf} className="side-image" alt="Illustration of community participation" />
 
         </div>
 

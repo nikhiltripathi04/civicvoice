@@ -1,10 +1,9 @@
-import Navbar from "../components/Navbar";
 import Tilt from "react-parallax-tilt";
 import "./Home.css";
 
 import adminImg from "../assets/Home/AdminLogo.png";
 import authorityImg from "../assets/Home/AuthorityLogo.png";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 import { MdTrackChanges } from "react-icons/md";
@@ -14,29 +13,76 @@ export default function Home() {
   const navigate = useNavigate();
   return (
     <>
-      <Navbar />
+      <main className="home-page">
+        <section className="home-intro glass-panel">
+          <div className="home-intro-grid">
+            <div>
+              <p className="eyebrow">Citizen-first complaint management</p>
+              <h1>Raise city issues. Track action. Build trust.</h1>
+              <p>
+                CivicVoice helps residents and civic authorities collaborate with
+                clarity, transparency, and measurable accountability.
+              </p>
 
-      <div className="home-container">
-        <div className="cards">
+              <div className="home-actions">
+                <button type="button" className="hero-btn" onClick={() => navigate("/submit")}>
+                  Submit a Complaint
+                </button>
+                {/* <button
+                  type="button"
+                  className="hero-btn hero-btn-muted"
+                  onClick={() => navigate("/track")}
+                >
+                  Track Existing Complaint
+                </button> */}
+              </div>
+            </div>
+
+            <aside className="intro-metrics" aria-label="Impact metrics">
+              <div>
+                <span>Response Time</span>
+                <strong>24 hrs</strong>
+              </div>
+              <div>
+                <span>Citizen Updates</span>
+                <strong>Live Status</strong>
+              </div>
+              <div>
+                <span>Coverage</span>
+                <strong>City-wide</strong>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section className="cards">
           <Tilt tiltMaxAngleX={10} tiltMaxAngleY={10}>
-            <div className="login-card" onClick={() => navigate("/login")}>
+            <div className="login-card" onClick={() => navigate("/login?role=user")}>
+              <span className="card-tag">For Citizens</span>
               <img src={authorityImg} alt="Authority" />
-              <p>Login / Sign up As User</p>
+              <h3>User Portal</h3>
+              <p>Sign in to report, follow, and manage your submitted complaints.</p>
+              <span className="card-link">Continue</span>
             </div>
           </Tilt>
 
           <Tilt tiltMaxAngleX={10} tiltMaxAngleY={10}>
-            <div className="login-card" onClick={() => navigate("/login")}>
+            <div className="login-card" onClick={() => navigate("/login?role=admin")}>
+              <span className="card-tag">For Municipal Teams</span>
               <img src={adminImg} alt="Admin" />
-              <p>Login / Sign up As Admin</p>
+              <h3>Admin Portal</h3>
+              <p>Monitor incoming issues and update status for public transparency.</p>
+              <span className="card-link">Continue</span>
             </div>
           </Tilt>
-        </div>
-      </div>
+        </section>
 
-      <div className="banner">Be the change. Report Issues now!</div>
+        <section className="banner glass-panel">
+          Clean neighborhoods start with one report. Your voice becomes visible action.
+        </section>
+      </main>
 
-      <div className="footer">
+      <footer className="footer glass-panel">
         <div className="footer-col">
           <h3>CivicVoice</h3>
           <p>Empowering citizens to build cleaner, safer cities.</p>
@@ -45,22 +91,22 @@ export default function Home() {
         <div className="footer-col">
           <h4>Quick Links</h4>
 
-          <a href="/">
+          <Link to="/">
             <FaHome className="footer-icon" /> Home
-          </a>
+          </Link>
 
-          <a href="/track">
+          <Link to="/track">
             <MdTrackChanges className="footer-icon" /> Track Complaint
-          </a>
+          </Link>
 
-          <a href="/submit">
+          <Link to="/submit">
             <IoCreate className="footer-icon" /> Submit Complaint
-          </a>
+          </Link>
         </div>
 
         <div className="footer-col">
           <h4>Stay Updated</h4>
-          <a href="#">Subscribe</a>
+          <a href="#">Subscribe to alerts</a>
         </div>
 
         <div className="footer-col">
@@ -76,7 +122,9 @@ export default function Home() {
             <FaLinkedin className="footer-icon" /> LinkedIn
           </a>
         </div>
-      </div>
+
+        <p className="footer-note">Built for transparent civic collaboration.</p>
+      </footer>
       
     </>
   );
