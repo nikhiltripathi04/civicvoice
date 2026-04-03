@@ -3,8 +3,11 @@ const mongoose = require("mongoose");
 const ComplaintSchema = new mongoose.Schema({
 
  description:{
-  type:String,
-  required:true
+    type: String,
+    required: [true, "Description is required"],
+    trim: true,
+    minlength: [10, "Description must be at least 10 characters"],
+    maxlength: [1000, "Description cannot exceed 1000 characters"],
  },
 
  image:{
@@ -32,7 +35,8 @@ const ComplaintSchema = new mongoose.Schema({
 
  user:{
   type:mongoose.Schema.Types.ObjectId,
-  ref:"User"
+  ref:"User",
+  required: [true, "Complaint must be associated with a user"],
  }
 
 },{timestamps:true});

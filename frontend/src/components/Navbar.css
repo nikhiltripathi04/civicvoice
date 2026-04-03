@@ -1,103 +1,144 @@
+/* ------------------ Navbar Container ------------------ */
 .navbar {
-    position: fixed;
-    top: 14px;
-    left: 20px;
-    right: 20px;
-    z-index: 1000;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 18px;
-    border-radius: 16px;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.62));
-    border: 1px solid rgba(107, 92, 70, 0.2);
-    box-shadow: 0 10px 26px rgba(94, 74, 49, 0.14);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+  position: fixed;
+  top: 12px;
+  left: 16px;
+  right: 16px;
+  z-index: 1100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.6));
+  border: 1px solid rgba(108, 92, 70, 0.18);
+  box-shadow: 0 10px 28px rgba(95, 76, 54, 0.16);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  transition: all 0.3s ease;
 }
 
+.navbar:hover {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.7));
+  box-shadow: 0 14px 32px rgba(95, 76, 54, 0.22);
+}
+
+/* ------------------ Navbar Offset ------------------ */
 .navbar-offset {
-    height: 96px;
+  height: 72px;
 }
 
+/* ------------------ Logo ------------------ */
 .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .logo-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 11px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    color: #fff;
-    background: linear-gradient(140deg, #86b18c 0%, #6c9c75 100%);
-    box-shadow: 0 7px 18px rgba(108, 156, 117, 0.25);
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(140deg, #86b18c 0%, #6c9c75 100%);
+  box-shadow: 0 8px 22px rgba(108, 156, 117, 0.25);
+  font-size: 18px;
 }
 
 .logo-text {
-    font-family: "Sora", "Manrope", sans-serif;
-    font-size: 20px;
-    font-weight: 600;
-    color: #2f2a24;
+  font-family: "Sora", "Manrope", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2f2a24;
 }
 
+/* ------------------ Nav Links ------------------ */
 .nav-links {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  transition: max-height 0.3s ease;
 }
 
 .nav-links a,
 .nav-action-btn {
-    text-decoration: none;
-    color: #3f392f;
-    background: rgba(255, 255, 255, 0.72);
-    border: 1px solid rgba(107, 92, 70, 0.18);
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 14px;
-    padding: 9px 14px;
-    transition: transform 0.2s ease, background 0.2s ease;
+  text-decoration: none;
+  color: #3f392f;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(107, 92, 70, 0.18);
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 16px;
+  transition: all 0.2s ease;
 }
 
 .nav-links a:hover,
 .nav-action-btn:hover {
-    background: rgba(255, 255, 255, 0.92);
-    transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.92);
+  transform: translateY(-2px);
+  border-color: rgba(132, 88, 39, 0.4);
+  color: #845827;
 }
 
 .nav-action-btn {
-    cursor: pointer;
+  cursor: pointer;
+  outline: none;
+  border: 1px solid rgba(107, 92, 70, 0.18);
 }
 
+/* ------------------ Hamburger Button ------------------ */
+.hamburger-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  font-size: 26px;
+  cursor: pointer;
+  z-index: 1101;
+}
+
+/* ------------------ Mobile Styles ------------------ */
 @media (max-width: 900px) {
-    .navbar {
-        top: 8px;
-        left: 10px;
-        right: 10px;
-        padding: 10px 12px;
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 12px;
-    }
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 14px;
+  }
 
-    .navbar-offset {
-        height: 126px;
-    }
+  .navbar-offset {
+    height: 140px;
+  }
 
-    .logo-text {
-        font-size: 18px;
-    }
+  .hamburger-btn {
+    display: block;
+    position: absolute;
+    top: 14px;
+    right: 18px;
+  }
 
-    .nav-links {
-        width: 100%;
-        justify-content: flex-start;
-    }
+  .nav-links {
+    flex-direction: column;
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    gap: 8px;
+  }
+
+  .nav-links.open {
+    max-height: 1000px; /* safely high */
+  }
+
+  .nav-links a,
+  .nav-action-btn {
+    width: 100%;
+    text-align: left;
+    padding: 10px 14px;
+  }
 }

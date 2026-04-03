@@ -50,9 +50,9 @@ function App() {
 
     <Route path="/submit" element={<ProtectedRoute><SubmitComplaint/></ProtectedRoute>}/>
 
-      <Route path="/track" element={<TrackComplaint/>}/>
+    <Route path="/track" element={<ProtectedRoute><TrackComplaint/></ProtectedRoute>}/>
 
-      <Route path="/admin" element={<AdminRoute><AdminDashboard/></AdminRoute>}/>
+    <Route path="/admin" element={<AdminRoute><AdminDashboard/></AdminRoute>}/>
 
    </Routes>
 

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { clearAuthStorage, getStoredToken } from "../utils/authStorage";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
 const API = axios.create({
 
@@ -11,6 +11,7 @@ const API = axios.create({
 
 API.interceptors.request.use((req)=>{
  const token = getStoredToken();
+ console.log(token)
 
  if(token){
   req.headers.Authorization = `Bearer ${token}`;

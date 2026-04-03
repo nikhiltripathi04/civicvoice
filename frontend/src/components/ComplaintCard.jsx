@@ -36,7 +36,7 @@ const resolveComplaintImageUrl = (imagePath) => {
  return `${BACKEND_ORIGIN}/${normalizedPath}`;
 };
 
-export default function ComplaintCard({ complaint }) {
+export default function ComplaintCard({ complaint, isAdmin, onStatusChange }) {
  if (!complaint) {
   return null;
  }
@@ -87,6 +87,21 @@ export default function ComplaintCard({ complaint }) {
      <p>{formatDate(complaint.updatedAt)}</p>
     </div>
    </div>
+
+   {isAdmin && (
+    <div className="admin-actions">
+     <label>Update Status</label>
+     <select
+      value={status}
+      onChange={(e) => onStatusChange(complaint._id, e.target.value)}
+     >
+      <option value="pending">Pending</option>
+      <option value="assigned">Assigned</option>
+      <option value="in-progress">In Progress</option>
+      <option value="resolved">Resolved</option>
+     </select>
+    </div>
+   )}
   </article>
  );
 }

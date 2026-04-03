@@ -1,30 +1,28 @@
 import { useCallback, useEffect, useState } from "react";
-import API from "../services/api";
 import Navbar from "../components/Navbar";
+import ComplaintCard from "../components/ComplaintCard";
+import API from "../services/api";
 import "./AdminDashboard.css";
 
-const BACKEND_ORIGIN = (import.meta.env.VITE_BACKEND_ORIGIN || "http://localhost:5001").replace(/\/$/, "");
-
-const resolveComplaintImageUrl = (imagePath) => {
-  if (!imagePath || typeof imagePath !== "string") {
-    return "";
-  }
-
-  // Cloudinary and other absolute URLs should be used as-is.
-  if (/^https?:\/\//i.test(imagePath)) {
-    return imagePath;
-  }
-
-  const normalizedPath = imagePath.replace(/\\/g, "/").replace(/^\/+/, "");
-  return `${BACKEND_ORIGIN}/${normalizedPath}`;
-};
-
 export default function AdminDashboard() {
-
   const [complaints, setComplaints] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Filters
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [departmentFilter, setDepartmentFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Get unique departments from complaints
+  const uniqueDepartments = Array.from(
+    new Set(complaints
+      .map(c => c.department)
+      .filter(dept => dept && dept.trim())
+    )
+  ).sort();
+
+  // Fetch complaints from API
   const fetchComplaints = useCallback(async () => {
     setIsLoading(true);
     setErrorMessage("");
@@ -33,7 +31,7 @@ export default function AdminDashboard() {
       setComplaints(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
       console.error("Error fetching complaints", error);
-      setErrorMessage(error.userMessage || "Unable to load submitted complaints.");
+      setErrorMessage(error.response?.data?.message || "Unable to load complaints.");
     } finally {
       setIsLoading(false);
     }
@@ -43,20 +41,34 @@ export default function AdminDashboard() {
     fetchComplaints();
   }, [fetchComplaints]);
 
+  // Update complaint status
   const updateStatus = async (id, status) => {
-
     try {
-
-      await API.put(`/complaints/${id}/status`, {
-        status
-      });
-
-      fetchComplaints();
-
+      await API.put(`/complaints/${id}/status`, { status });
+      // Update local state without refetching
+      setComplaints(prev =>
+        prev.map(c => (c._id === id ? { ...c, status } : c))
+      );
     } catch (error) {
       console.error("Error updating status", error);
+      alert("Failed to update complaint status");
     }
   };
+
+  // Filter complaints
+  const filteredComplaints = complaints
+    .filter(c => statusFilter === "all" || c.status === statusFilter)
+    .filter(c => 
+      departmentFilter === "all" || 
+      (c.department || "").trim().toLowerCase() === departmentFilter.trim().toLowerCase()
+    )
+    .filter(c =>
+      searchTerm === "" ||
+      (c.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       c.user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       c.description?.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
     <>
@@ -66,45 +78,51 @@ export default function AdminDashboard() {
         <section className="admin-shell">
           <h2>Admin Dashboard</h2>
 
-          {errorMessage && <p className="admin-empty">{errorMessage}</p>}
+          {/* Filters */}
+          <div className="admin-filters">
+            <input
+              type="text"
+              placeholder="Search by user, email, or description"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
 
-          {!errorMessage && isLoading && <p className="admin-empty">Loading complaints...</p>}
+            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="assigned">Assigned</option>
+              <option value="in-progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+            </select>
 
-          {!errorMessage && !isLoading && complaints.length === 0 && (
-            <p className="admin-empty">No complaints available right now.</p>
-          )}
-
-          {!errorMessage && !isLoading && complaints.length > 0 && (
-            <div className="admin-list">
-              {complaints
-                .slice()
-                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                .map((c) => (
-                <article key={c._id} className="admin-item">
-                  <p><strong>Description:</strong> {c.description}</p>
-                  <p><strong>Status:</strong> {c.status}</p>
-                  <p><strong>Submitted by:</strong> {c.user?.name || c.user?.email || "Unknown user"}</p>
-                  <p><strong>Department:</strong> {c.department || "Not assigned"}</p>
-
-                  {c.image && (
-                    <img
-                      className="admin-image"
-                      src={resolveComplaintImageUrl(c.image)}
-                      alt="Complaint evidence"
-                    />
-                  )}
-
-                  <div className="admin-actions">
-                    <button onClick={() => updateStatus(c._id, "in-progress")}>Start</button>
-                    <button onClick={() => updateStatus(c._id, "resolved")}>Resolve</button>
-                  </div>
-                </article>
+            <select value={departmentFilter} onChange={(e) => setDepartmentFilter(e.target.value)}>
+              <option value="all">All Departments</option>
+              {uniqueDepartments.map(dept => (
+                <option key={dept} value={dept}>{dept}</option>
               ))}
-            </div>
+            </select>
+          </div>
+
+          {/* Loading / Error / Empty */}
+          {errorMessage && <p className="admin-empty">{errorMessage}</p>}
+          {!errorMessage && isLoading && <p className="admin-empty">Loading complaints...</p>}
+          {!errorMessage && !isLoading && filteredComplaints.length === 0 && (
+            <p className="admin-empty">No complaints match your filters.</p>
           )}
+
+          {/* Complaint List */}
+          <div className="admin-list">
+            {filteredComplaints.map((c) => (
+              <ComplaintCard
+                key={c._id}
+                complaint={c}
+                isAdmin={true}
+                onStatusChange={updateStatus}
+              />
+            ))}
+          </div>
         </section>
       </main>
     </>
-
   );
 }
